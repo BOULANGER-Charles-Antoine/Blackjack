@@ -1,6 +1,6 @@
 /*
-Nom du Programme : Black-Jack
-But : Jouer au jeu de Black-Jack
+Nom du Programme : Blackjack
+But : Jouer au jeu de Blackjack
 Auteur : Boulanger Charles Antoine
 Date : 04/05/2020
 Version : V2.0
@@ -11,11 +11,6 @@ import java.util.Scanner;
 public class Black_Jack {
     private static final Scanner pause = new Scanner(System.in);
     private static final int gain_init = 1000;
-    /*private static final int jeton_10 = 10,
-                             jeton_20 = 20,
-                             jeton_50 = 50,
-                             jeton_100 = 100,
-                             jeton_500 = 500;*/
 
     // Méthode pause
     public static void pause() {
@@ -41,14 +36,12 @@ public class Black_Jack {
                 case '1':
                     Partie();
                     pause();
-
                     System.out.println("\n\n\n\n\n");
 
                     break;
                 case '2':
                     Regles.afficher();
                     pause();
-
                     System.out.println("\n\n\n\n\n");
 
                     break;
@@ -91,33 +84,35 @@ public class Black_Jack {
                 sc.nextLine();
             }
 
-            Carte cc1 = deck.distribuerCarte(); // carte du croupier visible (la première)
+            Carte cc1 = deck.distribuerCarte();
             Carte cc2 = deck.distribuerCarte();
             Carte cj1 = deck.distribuerCarte();
-            Carte cj2 = cj1;//deck.distribuerCarte();
+            Carte cj2 = deck.distribuerCarte();
 
             mc.ajouterCarte(cc1);
             mc.ajouterCarte(cc2);
             mj.ajouterCarte(cj1);
             mj.ajouterCarte(cj2);
             mj.trieParValeur();
+            // Affichage des cartes du joueur et la carte visible du croupier
             System.out.println("\n\nLe croupier a un " + cc1 + "\n"); //on affiche la carte visible du croupier
             System.out.println("Vous avez \n" + mj + "donc vous avez " + mj.getBlackJackValeur() + " points\n"); //on affiche la main du joueur et le score associé
 
+            // Joueur a fait Blackjack
             if (mj.getBlackJackValeur() == 21) {
                 gj.setGain(gj.getGain() + (int)(gj.getMise() * 1.5));
                 gc.setGain(gc.getGain() - (int)(gj.getMise() * 1.5));
                 System.out.println("Vous avez fait un Blackjack, vous remportez " + gj.getMise() * 1.5 + " jetons, votre solde est désormais de " + gj.getGain());
                 mc.trieParValeur();
                 System.out.println("Le croupier avait \n" + mc + "donc " + mc.getBlackJackValeur() + " points\n");
-            }
+            } // Joueur a plus de 21 points
             else if (mj.getBlackJackValeur() > 21) {
                 gj.setGain(gj.getGain() - gj.getMise());
                 gc.setGain(gc.getGain() + gj.getMise());
                 System.out.println("Vous avez eu plus de 21 points, vous perdez " + gj.getMise() + " jetons, votre solde est désormais de " + gj.getGain());
                 mc.trieParValeur();
                 System.out.println("Le croupier avait \n" + mc + "donc " + mc.getBlackJackValeur() + " points\n");
-            }
+            } // Joueur a le choix pour continuer à jouer
             else { // Le joueur peut avoir le choix pour jouer
                 if (cc1.getValeurCommeChaine().equals("AS")) { // Si la première carte du croupier est un as, il peut demander une assurance
                     System.out.println("Voulez-vous une assurance ? ");
@@ -131,14 +126,14 @@ public class Black_Jack {
                         int mise_assurance = gj.getMise() / 2;
                         System.out.println("\nVous avez pris une assurance.");
                         mc.trieParValeur();
-                        if (cc2.getValeur() > 9) {
-                            gj.setGain(gj.getGain() + gj.getMise() + mise_assurance);
-                            gc.setGain(gc.getGain() - gj.getMise() - mise_assurance);
+
+                        // Croupier a fait Blackjack
+                        if (cc2.getValeur() == 10) {
                             System.out.println("Le croupier avait \n" + mc + "donc " + mc.getBlackJackValeur() + " points\n");
-                            System.out.println("Le croupier a fait un BlackJack, vous remportez " + (gj.getMise() + mise_assurance) + " jetons, votre solde est désormais de " + gj.getGain());
+                            System.out.println("Le croupier a fait un BlackJack, vous ne remportez et ne perdez aucun jetons, votre solde est de " + gj.getGain());
                         } else {
-                            gj.setGain(gj.getGain() - gj.getMise());
-                            gc.setGain(gc.getGain() + gj.getMise());
+                            gj.setGain(gj.getGain() - mise_assurance);
+                            gc.setGain(gc.getGain() + mise_assurance);
                             System.out.println("Le croupier avait \n" + mc + "donc " + mc.getBlackJackValeur() + " points\n");
                             System.out.println("Le croupier n'a pas fait un BlackJack, vous perdez " + mise_assurance + " jetons, votre solde est désormais de " + gj.getGain());
                         }
@@ -150,6 +145,7 @@ public class Black_Jack {
                         System.out.println("\t 1 - Tirer une carte\n\t 2 - Rester\n\t 3 - Doubler\n\t 4 - Abandonner");
                         if (cj1.getValeur() == cj2.getValeur())
                             System.out.println("\t 5 - Partager");
+
                         rep_j = sc.nextLine().charAt(0);
                         while (rep_j != '1' && rep_j != '2' && rep_j != '3' && rep_j != '4' && rep_j != '5') {
                             System.out.println("Veuillez entrer un chiffre entre 1 et 5 : ");
@@ -200,7 +196,6 @@ public class Black_Jack {
                                 break;
                             case '4':
                                 finTourJoueur = true;
-                                abandon = true;
                                 gj.setGain(gj.getGain() - gj.getMise() / 2);
                                 gc.setGain(gc.getGain() + gj.getMise() / 2);
                                 System.out.println("Vous perdez " + gj.getMise() / 2 + " jetons, votre solde est désormais de " + gj.getGain());
@@ -228,6 +223,7 @@ public class Black_Jack {
                     // Tour du croupier
                     if(!abandon && mj.getBlackJackValeur() <= 21 || (split && (mj.getBlackJackValeur() <= 21 || mj2.getBlackJackValeur() <= 21))) {
                         System.out.println("Le croupier a \n" + mc + "donc " + mc.getBlackJackValeur() + " points\n");
+                        // Tirage de scartes du croupier
                         while (mc.getBlackJackValeur() < 16) {
                             pause(); // Le croupier tire au fur et à mesure
                             Carte c = deck.distribuerCarte();
@@ -241,12 +237,15 @@ public class Black_Jack {
                             System.out.println("Vous avez dans votre première main \n" + mj + "donc " + mj.getBlackJackValeur() + " points\n");
                         else
                             System.out.println("Vous avez \n" + mj + "donc " + mj.getBlackJackValeur() + " points\n");
+
+                        // Calcul score dans première main
                         int[] gain = verifScore(mj, mc, gj.getMise(), gj.getGain(), gc.getGain(), rep_j);
                         gj.setGain(gain[0]);
                         gc.setGain(gain[1]);
 
                         if(split) {
                             System.out.println("\nVous avez dans votre deuxième main \n" + mj2 + "donc " + mj2.getBlackJackValeur() + " points\n");
+                            // Calcul score dans deuxième main
                             gain = verifScore(mj2, mc, gj.getMise(), gj.getGain(), gc.getGain(), rep_j);
                             gj.setGain(gain[0]);
                             gc.setGain(gain[1]);
@@ -259,6 +258,7 @@ public class Black_Jack {
             System.out.println("\n\n\n\n\n");
         } while(gj.getGain() > 0 && gc.getGain() > 0);
 
+        // Gagnant ou perdant
         if(gc.getGain() < 1)
             System.out.println("Félicitations vous avez gagné, votre solde est de " + gj.getGain() + ", la banque vous doit " + Math.abs(gc.getGain()));
         else if(gj.getGain() < 1)
@@ -301,8 +301,8 @@ public class Black_Jack {
     // Vérifie le score du croupier et du joueur avant de renvoyer les gains de ceux-ci
     public static int[] verifScore (MainJoueur mj, MainJoueur mc, int mise, int gainj, int gainc, char reponse) {
         int[] tabgain = new int[2];
-        if(mj.getBlackJackValeur()<=21) {
-            if(mc.getBlackJackValeur() > 21 && mj.getBlackJackValeur()<=21) { // Croupier a plus de 21 points
+        if(mj.getBlackJackValeur() <= 21) {
+            if(mc.getBlackJackValeur() > 21 && mj.getBlackJackValeur() <= 21) { // Croupier a plus de 21 points
                 if(reponse == '3') {
                     gainj += 2 * mise;
                     gainc -= 2 * mise;
@@ -329,7 +329,7 @@ public class Black_Jack {
                     System.out.println("Vous gagnez " + mise + " jetons, votre solde est désormais de " + gainj);
                 }
             }
-            else { // Soit il a plus de point que le joueur
+            else { // Soit le croupier a plus de point que le joueur
                 if(reponse == '3') {
                     gainj -= 2 * mise;
                     gainc += 2 * mise;
